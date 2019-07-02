@@ -1,0 +1,44 @@
+{
+  "name": "amps-kerberos-authenticator",
+  "version": "1.0.0",
+  "description": "AMPS Kerberos Authenticator",
+  "main": "amps-kerberos-authenticator.js",
+  "types": "amps-kerberos-authenticator.d.ts",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "amps": "5.3.0-0.333340.b0dae99",
+    "kerberos": "1.1.2"
+  },
+  "devDependencies": {
+    "@types/jasmine": "3.3.13",
+    "@types/kerberos": "1.1.0",
+    "jasmine": "3.4.0",
+    "typescript": "3.5.2",
+    "uglify-js": "3.6.0"
+  },
+  "scripts": {
+    "clear": "rm -rf *.js && rm -rf *.d.ts",
+    "tsdef": "tsc --declaration --outDir . --emitDeclarationOnly",
+    "uglify": "uglifyjs amps-kerberos-authenticator.js -c -m -o amps-kerberos-authenticator.min.js",
+    "gen": "npm run clear && tsc --outDir . && npm run tsdef && npm run uglify",
+    "test": "npm run gen && cd tests && node ./jasmine.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/60East/amps-authentication-javascript.git"
+  },
+  "keywords": [
+    "AMPS",
+    "Kerberos",
+    "Authenticator",
+    "Client"
+  ],
+  "author": "60East Technologies, Incorporated",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/60East/amps-authentication-javascript/issues"
+  },
+  "homepage": "https://github.com/60East/amps-authentication-javascript#readme"
+}
