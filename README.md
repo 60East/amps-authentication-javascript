@@ -45,8 +45,8 @@ async function main() {
     const login = 'username';
     const port = 10304;
     const hostName = 'hostname';
-    const uri = 'ws://${login}@${hostName}:${port}/amps/json';
-    const spn = 'AMPS/${hostName}';
+    const uri = `ws://${login}@${hostName}:${port}/amps/json`;
+    const spn = `AMPS/${hostName}`;
 
     try {
         // connect
