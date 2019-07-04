@@ -27,6 +27,9 @@ import { Authenticator } from 'amps';
 import { initializeClient, KerberosClient } from 'kerberos';
 
 
+const IS_WIN = process.platform === 'win32';
+
+
 export class AMPSKerberosAuthenticator implements Authenticator {
     private spn: string;
     private client: KerberosClient;
@@ -65,10 +68,20 @@ export function validateSPN(spn: string): void {
     // validation patterns
     const hostPattern =
     '(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])';
-    const spnPattern = new RegExp(`^(\\w+/)(${hostPattern})(:\\d+)?$`);
-    const spnFormat = '<service>/<host>[:<port>]';
+    let spnPattern = `^(\\w+/)(${hostPattern})(:\\d+)?`;
+    let spnFormat;
 
-    if (!spn.match(spnPattern)) {
+    if (IS_WIN) {
+        const realmPattern = '@[\\w\\d]+([\\.\\w\\d]*)?';
+        spnPattern = `${spnPattern}(${realmPattern})?$`;
+        spnFormat = '<service>/<host>[:<port>][@REALM]';
+    }
+    else {
+        spnFormat = '<service>/<host>[:<port>]';
+        spnPattern = `${spnPattern}$`;
+    }
+
+    if (!spn.match(new RegExp(spnPattern))) {
         throw new Error(`The specified SPN ${spn} does not match the format ${spnFormat}`);
     }
 }

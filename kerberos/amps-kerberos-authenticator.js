@@ -60,6 +60,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var kerberos_1 = require("kerberos");
+var IS_WIN = process.platform === 'win32';
 var AMPSKerberosAuthenticator = /** @class */ (function () {
     function AMPSKerberosAuthenticator(spn) {
         var _this = this;
@@ -109,9 +110,18 @@ exports.AMPSKerberosAuthenticator = AMPSKerberosAuthenticator;
 function validateSPN(spn) {
     // validation patterns
     var hostPattern = '(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])';
-    var spnPattern = new RegExp("^(\\w+/)(" + hostPattern + ")(:\\d+)?$");
-    var spnFormat = '<service>/<host>[:<port>]';
-    if (!spn.match(spnPattern)) {
+    var spnPattern = "^(\\w+/)(" + hostPattern + ")(:\\d+)?";
+    var spnFormat;
+    if (IS_WIN) {
+        var realmPattern = '@[\\w\\d]+([\\.\\w\\d]*)?';
+        spnPattern = spnPattern + "(" + realmPattern + ")?$";
+        spnFormat = '<service>/<host>[:<port>][@REALM]';
+    }
+    else {
+        spnFormat = '<service>/<host>[:<port>]';
+        spnPattern = spnPattern + "$";
+    }
+    if (!spn.match(new RegExp(spnPattern))) {
         throw new Error("The specified SPN " + spn + " does not match the format " + spnFormat);
     }
 }

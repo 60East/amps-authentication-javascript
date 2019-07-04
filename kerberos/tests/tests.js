@@ -1,7 +1,10 @@
 'use strict';
 /* global describe, beforeAll, expect, it, xit */  // eslint-disable-line
-const { AMPSKerberosAuthenticator, validateSPN } = require('../out/amps-kerberos-authenticator');
+const { AMPSKerberosAuthenticator, validateSPN } = require('../amps-kerberos-authenticator');
 const { Client } = require('amps');
+
+
+const IS_WIN = process.platform === 'win32';
 
 
 // required variables that can also be set in the the environment
@@ -13,7 +16,7 @@ const spn = `AMPS/${host}`;
 
 
 beforeAll(function(done) {
-    if (!process.env.KRB5_CONFIG || !process.env.KRB5_CLIENT_KTNAME) {
+    if (!IS_WIN && (!process.env.KRB5_CONFIG || !process.env.KRB5_CLIENT_KTNAME)) {
         console.error('Kerberos environment variables are not set');
         return process.exit(1);
     }
@@ -115,22 +118,16 @@ it('Undefined SPN', async function() {
 
 
 it('SPN Validator', function(done) {
-    const spns = [
+    let spns = [
         'AMPS/localhost',
         'AMPS/localhost:1234',
         'AMPS/localhost.localdomain',
         'AMPS/localhost.localdomain:1234',
         'AMPS/ac-1234.localhost.com',
-        'AMPS/ac-1234.localhost.com:1234'
+        'AMPS/ac-1234.localhost.com:1234',
     ];
 
-    const invalidSpns = [
-        'FOO',
-        'localhost.localdomain',
-        'AMPS@localhost',
-        'AMPS@localhost.localdomain',
-        'AMPS@localhost.localdomain',
-        'AMPS@localhost.localdomain/FOO',
+    const spnsWithRealm = [
         'AMPS/localhost@SOMEREALM',
         'AMPS/localhost@SOMEREALM.COM',
         'AMPS/localhost@SOME.REALM.COM',
@@ -142,8 +139,24 @@ it('SPN Validator', function(done) {
         'AMPS/localhost.localdomain@SOME.REALM.COM',
         'AMPS/localhost.localdomain:1234@SOMEREALM',
         'AMPS/localhost.localdomain:1234@SOMEREALM.COM',
-        'AMPS/localhost.localdomain:1234@SOME.REALM.COM'
+        'AMPS/localhost.localdomain:1234@SOME.REALM.COM',
+    ]
+
+    let invalidSpns = [
+        'FOO',
+        'localhost.localdomain',
+        'AMPS@localhost',
+        'AMPS@localhost.localdomain',
+        'AMPS@localhost.localdomain',
+        'AMPS@localhost.localdomain/FOO',
     ];
+
+    if (IS_WIN) {
+        spns = spns.concat(spnsWithRealm);
+    }
+    else {
+        invalidSpns = invalidSpns.concat(spnsWithRealm);
+    }
 
     for (const currentSpn of spns) {
         validateSPN(currentSpn);
