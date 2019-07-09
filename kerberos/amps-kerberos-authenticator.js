@@ -81,7 +81,9 @@ var AMPSKerberosAuthenticator = /** @class */ (function () {
         }); };
         // validate the SPN first
         validateSPN(spn);
-        this.spn = spn.replace(/\//g, '@');
+        if (!IS_WIN) {
+            this.spn = spn.replace(/\//g, '@');
+        }
         this.client = null;
     }
     AMPSKerberosAuthenticator.prototype.authenticate = function (login, password) {
