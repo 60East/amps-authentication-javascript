@@ -41,6 +41,9 @@ export class AMPSKerberosAuthenticator implements Authenticator {
         if (!IS_WIN) {
             this.spn = spn.replace(/\//g, '@');
         }
+        else {
+            this.spn = spn;
+        }
 
         this.client = null;
     }

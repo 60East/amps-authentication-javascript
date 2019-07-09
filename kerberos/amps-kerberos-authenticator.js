@@ -84,6 +84,9 @@ var AMPSKerberosAuthenticator = /** @class */ (function () {
         if (!IS_WIN) {
             this.spn = spn.replace(/\//g, '@');
         }
+        else {
+            this.spn = spn;
+        }
         this.client = null;
     }
     AMPSKerberosAuthenticator.prototype.authenticate = function (login, password) {

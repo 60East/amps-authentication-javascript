@@ -1,6 +1,6 @@
 {
   "name": "amps-kerberos-authenticator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "AMPS Kerberos Authenticator",
   "main": "amps-kerberos-authenticator.js",
   "types": "amps-kerberos-authenticator.d.ts",
